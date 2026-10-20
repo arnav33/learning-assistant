@@ -27,4 +27,4 @@ class ModelService:
         return self._repository.delete(model_id)
 
 
-model_service = ModelService(repositories.models)
+model_service = ModelService(repositories.entity)

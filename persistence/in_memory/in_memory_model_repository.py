@@ -10,6 +10,7 @@ class InMemoryModelRepository(ModelRepository):
     def __init__(self):
         # check_same_thread=False permits FastAPI async worker pools to run cross-thread queries safely
         self.conn = sqlite3.connect(":memory:", check_same_thread=False)
+        self.conn.row_factory = sqlite3.Row
         self.cursor = self.conn.cursor()
         self._create_table()
         self.create(ModelEntity(

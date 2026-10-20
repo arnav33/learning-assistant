@@ -6,7 +6,7 @@ class _RepositoryFactory:
     """A clean database factory using zero dynamic reflection libraries."""
     def __init__(self, db_type: SupportedDatabase):
         self.db_type = db_type
-        self.models = self._bootstrap_table()
+        self.entity = self._bootstrap_table()
 
     def _bootstrap_table(self):
         # Clean, explicit compiler-native mapping
