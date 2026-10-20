@@ -39,14 +39,14 @@ describe('Model', () => {
 
   it('should create', () => {
     fixture.detectChanges();
-    http.expectOne('/api/v1/service/models/').flush([]);
+    http.expectOne('/api/v1/core/models/').flush([]);
 
     expect(component).toBeTruthy();
   });
 
   it('should list models returned by the api', async () => {
     fixture.detectChanges();
-    const request = http.expectOne('/api/v1/service/models/');
+    const request = http.expectOne('/api/v1/core/models/');
     expect(request.request.method).toBe('GET');
     request.flush([sample]);
     await fixture.whenStable();

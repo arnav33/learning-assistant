@@ -17,7 +17,7 @@ export interface ModelRecord {
 @Injectable({ providedIn: 'root' })
 export class ModelApi {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = '/api/v1/service/models';
+  private readonly baseUrl = '/api/v1/core/models';
 
   getAll(): Observable<ModelRecord[]> {
     return this.http.get<ModelRecord[]>(`${this.baseUrl}/`);

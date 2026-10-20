@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from service.api.model_api import router as model_api_router
+from backend.api.model_api import router as model_api_router
 
 app = FastAPI()
 app.add_middleware(
@@ -10,7 +10,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(model_api_router, prefix="/api/v1/service/models", tags=["models"])
+app.include_router(model_api_router, prefix="/api/v1/core/models", tags=["models"])
 
 @app.get("/")
 def read_root():

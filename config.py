@@ -1,4 +1,4 @@
-# File: /src/config.py
+# File: /config.py
 from typing import Literal
 
 from enum import Enum

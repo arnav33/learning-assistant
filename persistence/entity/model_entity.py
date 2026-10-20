@@ -1,4 +1,4 @@
-# File: /src/service/persistence/entities/model_entity.py
+# File: /backend/persistence/entities/model_entity.py
 from dataclasses import dataclass, asdict
 from typing import Any, Dict, Optional
 
