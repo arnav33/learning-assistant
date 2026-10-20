@@ -1,0 +1,29 @@
+.container { padding: 2rem; font-family: sans-serif; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.records-table {
+  width: 100%; border-collapse: collapse;
+  th, td { border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: top; }
+  th { background-color: #f5f5f5; }
+}
+.btn-primary { background: #0066cc; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; }
+.btn-primary:disabled { opacity: 0.6; cursor: default; }
+.btn-secondary { background: #ccc; color: black; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; }
+.actions { white-space: nowrap; }
+.icon-button {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; margin-right: 4px; padding: 0;
+  border: none; border-radius: 4px; background: transparent; color: #333; cursor: pointer;
+  svg { width: 18px; height: 18px; fill: currentColor; }
+  &:hover { background: #f0f0f0; }
+  &.delete { color: #d1242f; }
+  &.delete:hover { background: #fde8e8; }
+}
+.error-msg { color: red; font-size: 0.8rem; display: block; margin-top: 4px; }
+.error-banner { color: #9b1c1c; background: #fde8e8; border: 1px solid #f8b4b4; border-radius: 4px; padding: 10px 12px; }
+.status, .muted, .no-data { color: #666; }
+.muted { font-size: 0.8rem; margin-top: 4px; }
+.form-group { margin-bottom: 1rem; label { display: block; margin-bottom: 4px; } input[type='text'], input[type='number'] { width: 100%; padding: 8px; box-sizing: border-box; } }
+.checkbox-row label { display: flex; align-items: center; gap: 8px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem; }
+dialog::backdrop { background: rgba(0, 0, 0, 0.5); }
+dialog { border: none; border-radius: 8px; padding: 2rem; width: 440px; max-width: calc(100vw - 2rem); }

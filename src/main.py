@@ -1,0 +1,17 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from service.api.model_api import router as model_api_router
+
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200", "http://127.0.0.1:4200"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(model_api_router, prefix="/api/v1/service/models", tags=["models"])
+
+@app.get("/")
+def read_root():
+    return {"message": "Hello, World!"}

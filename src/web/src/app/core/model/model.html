@@ -1,0 +1,100 @@
+<div class="container">
+  <div class="header">
+    <h2>Model Registry</h2>
+    <button class="btn-primary" type="button" (click)="openAddModal()">+ Add New Model</button>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="error-banner">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="status">Loading models…</p>
+  } @else {
+    <table class="records-table">
+      <thead>
+        <tr>
+          <th>Model Name</th>
+          <th>Provider</th>
+          <th>Thinking Budget</th>
+          <th>Active</th>
+          <th>Last Modified</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (record of records(); track record.id) {
+          <tr>
+            <td>{{ record.model }}</td>
+            <td>{{ record.model_provider }}</td>
+            <td>{{ record.thinking_budget }}</td>
+            <td>{{ record.active ? 'Yes' : 'No' }}</td>
+            <td>{{ record.last_modified_time | utcToLocal }}</td>
+            <td class="actions">
+              <button class="icon-button" type="button" aria-label="Edit" (click)="openEditModal(record.id)">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                </svg>
+              </button>
+              <button class="icon-button delete" type="button" aria-label="Delete" (click)="deleteRecord(record.id)">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                </svg>
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="no-data">No models registered yet.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
+
+<dialog #formModal class="modal-backdrop">
+  <div class="modal-content">
+    <h3>{{ editingRecordId() ? 'Edit Model Details' : 'Register New Model' }}</h3>
+
+    <form [formGroup]="form" (ngSubmit)="onSave()">
+      <div class="form-group">
+        <label for="model">Model Code/Name</label>
+        <input id="model" type="text" formControlName="model" />
+        @if (form.controls.model.touched && form.controls.model.invalid) {
+          <span class="error-msg">Model identification is required</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="model_provider">Model Provider</label>
+        <input id="model_provider" type="text" formControlName="model_provider" />
+        @if (form.controls.model_provider.touched && form.controls.model_provider.invalid) {
+          <span class="error-msg">Provider configuration name is required</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="thinking_budget">Thinking Budget</label>
+        <input id="thinking_budget" type="number" formControlName="thinking_budget" />
+        @if (form.controls.thinking_budget.touched && form.controls.thinking_budget.invalid) {
+          <span class="error-msg">Budget parameter must be 0 or higher</span>
+        }
+      </div>
+
+      <div class="form-group checkbox-row">
+        <label for="active">
+          <input id="active" type="checkbox" formControlName="active" />
+          Active
+        </label>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeModal()">Cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="form.invalid || saving()">
+          {{ saving() ? 'Saving…' : 'Save Changes' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</dialog>
