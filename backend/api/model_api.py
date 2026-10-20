@@ -1,26 +1,26 @@
 from fastapi import APIRouter
+
+from backend.service.model_service import model_service
 from persistence.entity.model_entity import ModelEntity
-from persistence.repositories import repositories
 
 router = APIRouter()
 
 @router.get("/")
 def get_model():
-    return [model.to_dict() for model in repositories.models.get_all()]
+    return model_service.get_all()
 
 @router.get("/{model_id}")
 def get_model_by_id(model_id: str):
-    model = repositories.models.get_by_id(model_id)
-    return model.to_dict() if model else None
+    return model_service.get_by_id(model_id)
 
 @router.post("/")
 def create_model(model: ModelEntity):
-    return repositories.models.create(model)
+    return model_service.create(model)
 
 @router.put("/{model_id}")
 def update_model(model_id: str, model: ModelEntity):
-    return repositories.models.update(model_id, model)
+    return model_service.update(model_id, model)
 
 @router.delete("/{model_id}")
 def delete_model(model_id: str):
-    return repositories.models.delete(model_id)
+    return model_service.delete(model_id)
