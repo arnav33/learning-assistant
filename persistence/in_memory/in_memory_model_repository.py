@@ -72,6 +72,11 @@ class InMemoryModelRepository(ModelRepository):
         row = self.cursor.fetchone()
         return ModelEntity.from_db_row(row) if row else None
 
+    def get_by_name(self, name: str) -> Optional[ModelEntity]:
+        self.cursor.execute("SELECT * FROM model WHERE model = ?", (name,))
+        row = self.cursor.fetchone()
+        return ModelEntity.from_db_row(row) if row else None
+
     def update(self, model_id: str, entity: ModelEntity) -> bool:
         self.cursor.execute("""
             UPDATE model 

@@ -1,0 +1,91 @@
+<div class="container">
+  <div class="header">
+    <h2>Agent Registry</h2>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="error-banner">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="status">Loading agents…</p>
+  } @else {
+    <table class="records-table">
+      <thead>
+        <tr>
+          <th>Agent Name</th>
+          <th>Model Name</th>
+          <th>Provider</th>
+          <th>Thinking Budget</th>
+          <th>Active</th>
+          <th>Last Modified</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (record of records(); track record.id) {
+          <tr>
+            <td>{{ record.name }}</td>
+            <td>{{ modelFor(record.model_id)?.model }}</td>
+            <td>{{ modelFor(record.model_id)?.model_provider }}</td>
+            <td>{{ modelFor(record.model_id)?.thinking_budget }}</td>
+            <td>{{ record.active ? 'Yes' : 'No' }}</td>
+            <td>{{ record.last_modified_time | utcToLocal }}</td>
+            <td class="actions">
+              <button class="icon-button" type="button" aria-label="Edit" (click)="openEditModal(record.id)">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                </svg>
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="no-data">No agents registered yet.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
+
+<dialog #formModal class="modal-backdrop">
+  <div class="modal-content">
+    <h3>Edit Agent Details</h3>
+
+    <form [formGroup]="form" (ngSubmit)="onSave()">
+      <div class="form-group">
+        <label for="name">Agent Name</label>
+        <input id="name" type="text" formControlName="name" readonly />
+      </div>
+
+      <div class="form-group">
+        <label for="model_id">Model Name</label>
+        <select id="model_id" formControlName="model_id">
+          <option value="">Select a model</option>
+          @for (model of models(); track model.id) {
+            <option [value]="model.id">{{ model.model }}</option>
+          }
+        </select>
+        @if (form.controls.model_id.touched && form.controls.model_id.invalid) {
+          <span class="error-msg">Model name is required</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <input id="description" type="text" formControlName="description" />
+        @if (form.controls.description.touched && form.controls.description.invalid) {
+          <span class="error-msg">Description is required</span>
+        }
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeModal()">Cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="form.invalid || saving()">
+          {{ saving() ? 'Saving…' : 'Save Changes' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</dialog>

@@ -11,3 +11,10 @@ class ModelEntity(BaseEntity):
     model_provider: str
     thinking_budget: int
     active: bool
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "model": self.model,
+            "model_provider": self.model_provider,
+            "thinking_budget": self.thinking_budget
+        }

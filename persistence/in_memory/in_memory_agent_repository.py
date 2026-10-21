@@ -1,11 +1,11 @@
 import sqlite3
 from typing import List, Optional
 
-from persistence.base_repository import BaseRepository
+from persistence.agent_repository import AgentRepository
 from persistence.entity.agent_entity import AgentEntity
 
 
-class InMemoryAgentRepository(BaseRepository[AgentEntity]):
+class InMemoryAgentRepository(AgentRepository):
     """In-memory SQLite store for agent records."""
 
     def __init__(self):
@@ -15,7 +15,7 @@ class InMemoryAgentRepository(BaseRepository[AgentEntity]):
         self._create_table()
         self.create(AgentEntity(
             id="c3e1a9b4-7d26-4f58-8a10-2e6b9d4c7f81",
-            name="local14",
+            name="search",
             description="local14",
             model_id="8f603127-6459-4e34-b1f8-18b28672d77f",
             active=True,
@@ -68,6 +68,11 @@ class InMemoryAgentRepository(BaseRepository[AgentEntity]):
 
     def get_by_id(self, agent_id: str) -> Optional[AgentEntity]:
         self.cursor.execute("SELECT * FROM agent WHERE id = ?", (agent_id,))
+        row = self.cursor.fetchone()
+        return AgentEntity.from_db_row(row) if row else None
+
+    def get_by_name(self, name: str) -> Optional[AgentEntity]:
+        self.cursor.execute("SELECT * FROM agent WHERE name = ?", (name,))
         row = self.cursor.fetchone()
         return AgentEntity.from_db_row(row) if row else None
 
