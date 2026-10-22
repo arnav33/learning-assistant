@@ -9,6 +9,7 @@ class SupportedDatabase(str, Enum):
 
 class SupportedAgent(str, Enum):
     """Supported database engine types for the application persistence layer."""
-    SEARCH = "search"
-
+    QUERY = "query"
+    SYNTHESIS = "synthesis"
+    FORMATTER = "formatter"
 DATABASE_TYPE: SupportedDatabase = SupportedDatabase.IN_MEMORY

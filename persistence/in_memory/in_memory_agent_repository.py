@@ -14,9 +14,34 @@ class InMemoryAgentRepository(AgentRepository):
         self.cursor = self.conn.cursor()
         self._create_table()
         self.create(AgentEntity(
-            id="c3e1a9b4-7d26-4f58-8a10-2e6b9d4c7f81",
-            name="search",
+            id="d4f7b2a8-1c63-4e90-8b27-5a9c3d6e1f04",
+            name="query",
             description="local14",
+            performance_reviews="",
+            model_id="8f603127-6459-4e34-b1f8-18b28672d77f",
+            active=True,
+            created_by=None,
+            created_time="2026-10-20T18:23:53.715Z",
+            last_modified_by=None,
+            last_modified_time="2026-10-20T18:23:53.715Z",
+        ))
+        self.create(AgentEntity(
+            id="c3e1a9b4-7d26-4f58-8a10-2e6b9d4c7f81",
+            name="synthesis",
+            description="local14",
+            performance_reviews="",
+            model_id="8f603127-6459-4e34-b1f8-18b28672d77f",
+            active=True,
+            created_by=None,
+            created_time="2026-10-20T18:23:53.715Z",
+            last_modified_by=None,
+            last_modified_time="2026-10-20T18:23:53.715Z",
+        ))
+        self.create(AgentEntity(
+            id="b8d2f6c1-4e17-4a93-9b20-6c5d8e1a0f47",
+            name="formatter",
+            description="local14",
+            performance_reviews="",
             model_id="8f603127-6459-4e34-b1f8-18b28672d77f",
             active=True,
             created_by=None,
@@ -31,6 +56,7 @@ class InMemoryAgentRepository(AgentRepository):
                 id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
                 description TEXT NOT NULL,
+                performance_reviews TEXT NOT NULL,
                 model_id TEXT NOT NULL,
                 active INTEGER NOT NULL,
                 created_by TEXT,
@@ -44,13 +70,14 @@ class InMemoryAgentRepository(AgentRepository):
     def create(self, entity: AgentEntity) -> str:
         self.cursor.execute("""
             INSERT INTO agent (
-                id, name, description, model_id, active,
+                id, name, description, performance_reviews, model_id, active,
                 created_by, created_time, last_modified_by, last_modified_time
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             entity.id,
             entity.name,
             entity.description,
+            entity.performance_reviews,
             entity.model_id,
             1 if entity.active else 0,
             entity.created_by,
@@ -79,12 +106,13 @@ class InMemoryAgentRepository(AgentRepository):
     def update(self, agent_id: str, entity: AgentEntity) -> bool:
         self.cursor.execute("""
             UPDATE agent
-            SET name = ?, description = ?, model_id = ?, active = ?,
+            SET name = ?, description = ?, performance_reviews = ?, model_id = ?, active = ?,
                 last_modified_by = ?, last_modified_time = ?
             WHERE id = ?
         """, (
             entity.name,
             entity.description,
+            entity.performance_reviews,
             entity.model_id,
             1 if entity.active else 0,
             entity.last_modified_by,

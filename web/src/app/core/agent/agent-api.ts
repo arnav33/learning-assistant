@@ -6,6 +6,7 @@ export interface AgentRecord {
   id: string;
   name: string;
   description: string;
+  performance_reviews: string;
   model_id: string;
   active: boolean;
   created_by: string | null;

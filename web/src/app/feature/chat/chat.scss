@@ -1,0 +1,220 @@
+:host {
+  display: block;
+  height: 100dvh;
+  color: #1f1f1f;
+  background: #fff;
+  font-family: sans-serif;
+}
+
+.chat-shell {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+}
+
+.sessions {
+  flex: 0 0 25%;
+  width: 25%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: #f4f4f5;
+  border-right: 1px solid #e4e4e7;
+}
+
+.sessions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem;
+  h2 { margin: 0; font-size: 1rem; }
+}
+
+.new-chat,
+.composer button {
+  border: none;
+  border-radius: 999px;
+  background: #1f1f1f;
+  color: #fff;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+  &:disabled { opacity: 0.5; cursor: default; }
+}
+
+.session-list {
+  overflow: auto;
+  padding: 0 0.5rem 1rem;
+}
+
+.topic-group {
+  margin: 0 0 0.5rem;
+  h3 {
+    margin: 0.85rem 0.75rem 0.2rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #52525b;
+    text-align: left;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.session {
+  width: 100%;
+  text-align: left;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  padding: 0.7rem 0.75rem 0.7rem calc(0.75rem + 3ch);
+  cursor: pointer;
+  color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  &:hover { background: #e9e9ec; }
+  &.selected { background: #e4e4e7; font-weight: 600; }
+}
+
+.conversation {
+  flex: 1 1 75%;
+  width: 75%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.conversation-topic {
+  margin: 0;
+  padding: 0.9rem 8% 0.75rem;
+  border-bottom: 1px solid #e4e4e7;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.messages {
+  flex: 1;
+  overflow: auto;
+  padding: 1.5rem 8%;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 1rem;
+  p {
+    margin: 0;
+    white-space: pre-wrap;
+    line-height: 1.5;
+    max-width: 42rem;
+  }
+  p + .search-results { margin-top: 0.75rem; }
+  &.human { align-items: flex-end; p { background: #f4f4f5; border-radius: 16px; padding: 0.75rem 1rem; } }
+  &.ai { align-items: flex-start; }
+}
+
+.answer-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  max-width: 42rem;
+}
+
+.expand {
+  flex: 0 0 auto;
+  margin-top: 0.15rem;
+  border: none;
+  background: transparent;
+  color: #52525b;
+  padding: 0.15rem;
+  cursor: pointer;
+  svg { display: block; width: 1rem; height: 1rem; }
+  &.open svg { transform: rotate(180deg); }
+}
+
+.full-answer {
+  margin-top: 0.45rem;
+  color: #3f3f46;
+}
+
+.message.ai :is(.answer-line p, .full-answer) a {
+  color: #1d4ed8;
+}
+
+.search-results {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 42rem;
+  li {
+    margin: 0;
+    padding: 0.75rem 0;
+    border-top: 1px solid #e4e4e7;
+  }
+  p {
+    margin: 0;
+    white-space: pre-wrap;
+    line-height: 1.5;
+  }
+  span {
+    font-weight: 600;
+    margin-right: 0.4rem;
+  }
+}
+
+.empty { text-align: center; margin-top: 20vh; }
+.pending { margin: 0 0 1rem; color: #666; }
+
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem 8% 1.25rem;
+}
+
+.composer-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+.topic,
+.composer textarea {
+  width: 100%;
+  border: 1px solid #d4d4d8;
+  border-radius: 16px;
+  padding: 0.8rem 1rem;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.composer textarea {
+  flex: 1;
+  resize: none;
+  min-height: 3rem;
+  max-height: 8rem;
+}
+
+.status { color: #666; padding: 0 1rem; }
+.error-banner {
+  color: #9b1c1c;
+  background: #fde8e8;
+  border: 1px solid #f8b4b4;
+  border-radius: 8px;
+  margin: 0 1rem 0.75rem;
+  padding: 0.6rem 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .chat-shell { flex-direction: column; }
+  .sessions, .conversation { width: 100%; flex-basis: auto; }
+  .sessions { max-height: 30dvh; border-right: none; border-bottom: 1px solid #e4e4e7; }
+  .messages, .composer, .conversation-topic { padding-left: 1rem; padding-right: 1rem; }
+}

@@ -11,6 +11,7 @@ interface AgentForm {
   name: FormControl<string>;
   model_id: FormControl<string>;
   description: FormControl<string>;
+  performance_reviews: FormControl<string>;
 }
 
 @Component({
@@ -24,6 +25,7 @@ export class Agent implements OnInit {
   private readonly modelApi = inject(ModelApi);
 
   @ViewChild('formModal') formModal!: ElementRef<HTMLDialogElement>;
+  @ViewChild('reviewsModal') reviewsModal!: ElementRef<HTMLDialogElement>;
 
   readonly records = signal<AgentRecord[]>([]);
   readonly models = signal<ModelRecord[]>([]);
@@ -31,12 +33,14 @@ export class Agent implements OnInit {
   readonly saving = signal(false);
   readonly errorMessage = signal('');
   readonly editingRecordId = signal<string | null>(null);
+  readonly selectedReviews = signal('');
   private editingSnapshot: AgentRecord | null = null;
 
   form = new FormGroup<AgentForm>({
     name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     model_id: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     description: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    performance_reviews: new FormControl('', { nonNullable: true }),
   });
 
   ngOnInit(): void {
@@ -82,6 +86,7 @@ export class Agent implements OnInit {
           name: record.name,
           model_id: record.model_id,
           description: record.description,
+          performance_reviews: '',
         });
         this.formModal.nativeElement.showModal();
       },
@@ -89,6 +94,15 @@ export class Agent implements OnInit {
         this.errorMessage.set(this.readError(error, 'Unable to load that agent.'));
       },
     });
+  }
+
+  openReviews(record: AgentRecord): void {
+    this.selectedReviews.set(record.performance_reviews);
+    this.reviewsModal.nativeElement.showModal();
+  }
+
+  closeReviews(): void {
+    this.reviewsModal.nativeElement.close();
   }
 
   closeModal(): void {
@@ -133,6 +147,15 @@ export class Agent implements OnInit {
     this.errorMessage.set(this.readError(error, 'Unable to save the agent.'));
   }
 
+  private appendReview(existing: string, addition: string): string {
+    const review = addition.trim();
+    if (!review) {
+      return existing;
+    }
+    const current = existing.trimEnd();
+    return current ? `${current}\n${review}` : review;
+  }
+
   private utcNow(): string {
     return new Date().toISOString();
   }
@@ -146,6 +169,7 @@ export class Agent implements OnInit {
       id: snapshot?.id ?? crypto.randomUUID(),
       name: snapshot?.name ?? formData.name.trim(),
       description: formData.description.trim(),
+      performance_reviews: this.appendReview(snapshot?.performance_reviews ?? '', formData.performance_reviews),
       model_id: formData.model_id,
       active: true,
       created_by: null,

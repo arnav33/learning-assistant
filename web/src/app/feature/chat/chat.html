@@ -1,0 +1,123 @@
+<div class="chat-shell">
+  <aside class="sessions">
+    <div class="sessions-header">
+      <h2>Chats</h2>
+      <button class="new-chat" type="button" (click)="startNewChat()" [disabled]="sending()">New chat</button>
+    </div>
+
+    @if (loading()) {
+      <p class="status">Loading chats…</p>
+    } @else if (sessions().length === 0) {
+      <p class="status">No chats yet.</p>
+    } @else {
+      <div class="session-list">
+        @for (group of groups(); track group.topic) {
+          <section class="topic-group">
+            <h3>{{ topicLabel(group.topic) }}</h3>
+            <ul>
+              @for (session of group.sessions; track session.id) {
+                <li>
+                  <button
+                    type="button"
+                    class="session"
+                    [class.selected]="session.id === selectedId()"
+                    [disabled]="sending()"
+                    (click)="selectSession(session.id)"
+                  >
+                    {{ session.name }}
+                  </button>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+      </div>
+    }
+  </aside>
+
+  <section class="conversation">
+    @if (selected(); as session) {
+      @if (session.chats.length > 0) {
+        <h2 class="conversation-topic">{{ topicLabel(session.topic) }}</h2>
+      }
+    }
+    <div class="messages" #transcript>
+      @if (selected(); as session) {
+        @for (chat of session.chats; track chat.id) {
+          <article class="message" [class.human]="chat.sender === 'human'" [class.ai]="chat.sender === 'ai'">
+            @if (displayText(chat)) {
+              <div class="answer-line">
+                @if (chat.sender === 'ai') {
+                  <p [innerHTML]="linked(displayText(chat))"></p>
+                } @else {
+                  <p>{{ displayText(chat) }}</p>
+                }
+                @if (canExpand(chat)) {
+                  <button
+                    type="button"
+                    class="expand"
+                    [class.open]="expanded(chat.id)"
+                    [attr.aria-expanded]="expanded(chat.id)"
+                    [attr.aria-label]="expanded(chat.id) ? 'Collapse answer' : 'Expand answer'"
+                    (click)="toggleAnswer(chat.id)"
+                  >
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </button>
+                }
+              </div>
+              @if (expanded(chat.id) && chat.answer) {
+                <p class="full-answer" [innerHTML]="linked(chat.answer)"></p>
+              }
+            } @else if (chat.results?.length) {
+              <ol class="search-results">
+                @for (item of chat.results; track $index) {
+                  <li>
+                    @for (field of resultFields(item); track field.key) {
+                      <p><span>{{ field.key }}</span> {{ field.value }}</p>
+                    }
+                  </li>
+                }
+              </ol>
+            }
+          </article>
+        } @empty {
+          <p class="status empty">Send a message to start this chat.</p>
+        }
+      } @else {
+        <p class="status empty">What do you want to learn?</p>
+      }
+
+      @if (sending()) {
+        <p class="pending">Thinking…</p>
+      }
+    </div>
+
+    @if (errorMessage()) {
+      <p class="error-banner">{{ errorMessage() }}</p>
+    }
+
+    <form class="composer" (submit)="send($event)">
+      @if (!selected()) {
+        <input
+          class="topic"
+          [formControl]="topic"
+          placeholder="Topic"
+          aria-label="Topic"
+          [disabled]="sending()"
+        />
+      }
+      <div class="composer-row">
+        <textarea
+          [formControl]="draft"
+          rows="1"
+          placeholder="Ask a question"
+          [attr.aria-label]="'Message'"
+          (keydown)="onComposerKeydown($event)"
+        ></textarea>
+        <button type="submit" [disabled]="sending() || !draft.value.trim() || (!selected() && !topic.value.trim())">Send</button>
+      </div>
+    </form>
+  </section>
+</div>

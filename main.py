@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.api.agent_api import router as agent_api_router
 from backend.api.model_api import router as model_api_router
+from backend.api.chat_api import router as chat_api_router
 
 app = FastAPI()
 app.add_middleware(
@@ -13,6 +14,7 @@ app.add_middleware(
 
 app.include_router(model_api_router, prefix="/api/v1/core/models", tags=["models"])
 app.include_router(agent_api_router, prefix="/api/v1/core/agents", tags=["agents"])
+app.include_router(chat_api_router, prefix="/api/v1/chat", tags=["chat"])
 
 @app.get("/")
 def read_root():

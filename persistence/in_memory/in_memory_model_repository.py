@@ -15,7 +15,7 @@ class InMemoryModelRepository(ModelRepository):
         self._create_table()
         self.create(ModelEntity(
             id="8f603127-6459-4e34-b1f8-18b28672d77f",
-            model="qwen2.5-14b",
+            model="qwen2.5:3b",
             model_provider="ollama",
             thinking_budget=0,
             active=True,

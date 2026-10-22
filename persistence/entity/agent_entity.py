@@ -9,5 +9,6 @@ class AgentEntity(BaseEntity):
 
     name: str
     description: str
+    performance_reviews: str
     model_id: str
     active: bool

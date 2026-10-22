@@ -14,6 +14,7 @@
       <thead>
         <tr>
           <th>Agent Name</th>
+          <th>Performance Reviews</th>
           <th>Model Name</th>
           <th>Provider</th>
           <th>Thinking Budget</th>
@@ -26,6 +27,18 @@
         @for (record of records(); track record.id) {
           <tr>
             <td>{{ record.name }}</td>
+            <td>
+              <div class="review-cell">
+                <span class="review-text">{{ record.performance_reviews }}</span>
+                @if (record.performance_reviews) {
+                  <button class="icon-button info" type="button" aria-label="View performance reviews" (click)="openReviews(record)">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                    </svg>
+                  </button>
+                }
+              </div>
+            </td>
             <td>{{ modelFor(record.model_id)?.model }}</td>
             <td>{{ modelFor(record.model_id)?.model_provider }}</td>
             <td>{{ modelFor(record.model_id)?.thinking_budget }}</td>
@@ -41,7 +54,7 @@
           </tr>
         } @empty {
           <tr>
-            <td colspan="7" class="no-data">No agents registered yet.</td>
+            <td colspan="8" class="no-data">No agents registered yet.</td>
           </tr>
         }
       </tbody>
@@ -73,6 +86,12 @@
       </div>
 
       <div class="form-group">
+        <label for="performance_reviews">Performance Reviews</label>
+        <textarea id="performance_reviews" formControlName="performance_reviews" rows="6" placeholder="Add a performance review"></textarea>
+        <p class="muted">A new review is added after the existing reviews.</p>
+      </div>
+
+      <div class="form-group">
         <label for="description">Description</label>
         <input id="description" type="text" formControlName="description" />
         @if (form.controls.description.touched && form.controls.description.invalid) {
@@ -87,5 +106,13 @@
         </button>
       </div>
     </form>
+  </div>
+</dialog>
+
+<dialog #reviewsModal class="reviews-dialog">
+  <h3>Performance Reviews</h3>
+  <pre class="reviews">{{ selectedReviews() }}</pre>
+  <div class="modal-actions">
+    <button type="button" class="btn-secondary" (click)="closeReviews()">Close</button>
   </div>
 </dialog>
