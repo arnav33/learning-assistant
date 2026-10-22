@@ -49,6 +49,9 @@
               <div class="answer-line">
                 @if (chat.sender === 'ai') {
                   <p [innerHTML]="linked(displayText(chat))"></p>
+                  @if (spentLabel(chat.id); as spent) {
+                    <span class="elapsed">{{ spent }}</span>
+                  }
                 } @else {
                   <p>{{ displayText(chat) }}</p>
                 }
@@ -69,6 +72,13 @@
               </div>
               @if (expanded(chat.id) && chat.answer) {
                 <p class="full-answer" [innerHTML]="linked(chat.answer)"></p>
+                @if (chat.references?.length) {
+                  <ul class="references">
+                    @for (item of chat.references; track item) {
+                      <li [innerHTML]="linked(item)"></li>
+                    }
+                  </ul>
+                }
               }
             } @else if (chat.results?.length) {
               <ol class="search-results">

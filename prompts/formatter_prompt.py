@@ -15,7 +15,6 @@ def formatter_prompt(reviews: str) -> str:
         .action("Read the query and the detailed answer.")
         .action("Write one sentence that answers the query, using the detailed answer.")
         .action("Return that sentence.")
-        .reviews(reviews)
         .build()
         .create_prompt()
     )

@@ -22,6 +22,7 @@ class ChatEntity:
     results: list[dict] | None = None
     compact: str | None = None
     answer: str | None = None
+    references: list[str] | None = None
 
 
 @dataclass

@@ -10,6 +10,7 @@ export interface ChatMessage {
   results?: Record<string, unknown>[] | null;
   compact?: string | null;
   answer?: string | null;
+  references?: string[] | null;
 }
 
 export interface ChatSession {

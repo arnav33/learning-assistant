@@ -6,8 +6,6 @@ from config import ToolConfig
 
 OLDEST_RESULT_LIMIT = int(ToolConfig.OLDEST_RESULT_LIMIT)
 
-logger = logging.getLogger("uvicorn.error")
-
 
 @tool
 def filter_tool(results: list[dict]) -> list[dict]:
@@ -26,7 +24,6 @@ def filter_tool(results: list[dict]) -> list[dict]:
     dated.sort(key=_age, reverse=True)
     kept = (dated + undated)[:OLDEST_RESULT_LIMIT]
     ranked = [{**item, "rank": index} for index, item in enumerate(kept, start=1)]
-    logger.info("filter_tool final result count: %s", len(ranked))
     return ranked
 
 

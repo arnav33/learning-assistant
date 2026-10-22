@@ -124,6 +124,14 @@
   max-width: 42rem;
 }
 
+.elapsed {
+  flex: 0 0 auto;
+  margin-top: 0.2rem;
+  color: #71717a;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
 .expand {
   flex: 0 0 auto;
   margin-top: 0.15rem;
@@ -141,7 +149,17 @@
   color: #3f3f46;
 }
 
-.message.ai :is(.answer-line p, .full-answer) a {
+.references {
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-width: 42rem;
+}
+
+.message.ai :is(.answer-line p, .full-answer, .references) a {
   color: #1d4ed8;
 }
 

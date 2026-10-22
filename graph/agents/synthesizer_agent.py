@@ -12,12 +12,12 @@ from graph.tools.search_tool import search_tool
 from graph.tools.whois_tool import whois_tool
 from prompts.synthesizer_prompt import synthesizer_prompt
 
-_synthesis_agent = agent_service.get_by_name(SupportedAgent.SYNTHESIS)
-_synthesis_model = model_service.get_by_id(_synthesis_agent.model_id)
+_synthesizer_agent = agent_service.get_by_name(SupportedAgent.SYNTHESIZER)
+_synthesizer_model = model_service.get_by_id(_synthesizer_agent.model_id)
 
 _writer = create_agent(
-    model=init_chat_model(**_synthesis_model.to_dict()),
-    system_prompt=synthesizer_prompt(_synthesis_agent.performance_reviews),
+    model=init_chat_model(**_synthesizer_model.to_dict()),
+    system_prompt=synthesizer_prompt(_synthesizer_agent.performance_reviews),
 )
 
 

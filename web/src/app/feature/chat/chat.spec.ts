@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -63,6 +64,7 @@ describe('Chat', () => {
 
   afterEach(() => {
     http.verify();
+    vi.restoreAllMocks();
   });
 
   function flushSessions(sessions: ChatSession[]): void {
@@ -100,6 +102,8 @@ describe('Chat', () => {
     flushSessions([latest]);
     fixture.componentInstance.draft.setValue('what is a chain');
     fixture.detectChanges();
+    let now = 1_000;
+    vi.spyOn(Date, 'now').mockImplementation(() => now);
     fixture.debugElement.query(By.css('form')).triggerEventHandler('submit');
     fixture.detectChanges();
 
@@ -111,6 +115,7 @@ describe('Chat', () => {
     const request = http.expectOne('/api/v1/chat/chat');
     expect(request.request.method).toBe('POST');
     expect(request.request.body).toEqual({ query: 'what is a chain', session_id: 'latest', topic: null });
+    now = 4_200;
     request.flush({
       ...latest,
       last_modified_time: '2026-10-21T01:00:00.000Z',
@@ -123,7 +128,8 @@ describe('Chat', () => {
     fixture.detectChanges();
 
     messages = [...fixture.nativeElement.querySelectorAll('.message')].map((item: HTMLElement) => item.textContent?.trim());
-    expect(messages.at(-1)).toBe('A chain calls one step after another.');
+    expect(messages.at(-1)).toContain('A chain calls one step after another.');
+    expect(fixture.nativeElement.querySelector('.elapsed').textContent).toBe('3.2s');
     expect(fixture.nativeElement.querySelector('.pending')).toBeNull();
     expect(fixture.componentInstance.draft.value).toBe('');
   });
@@ -216,6 +222,31 @@ describe('Chat', () => {
     fixture.nativeElement.querySelector('.expand').click();
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.full-answer').textContent).toContain('large language models');
+  });
+
+  it('shows references under the expanded answer', () => {
+    flushSessions([{
+      ...latest,
+      chats: [
+        latest.chats[0],
+        {
+          id: 'l2',
+          chat_session_id: 'latest',
+          sender: 'ai',
+          message: 'Yes.',
+          compact: 'Yes.',
+          answer: 'You can write AI agents in Java.',
+          references: ['[ADK for Java](https://example.com/adk)'],
+        },
+      ],
+    }]);
+
+    fixture.nativeElement.querySelector('.expand').click();
+    fixture.detectChanges();
+    const link = fixture.nativeElement.querySelector('.references a') as HTMLAnchorElement;
+    expect(fixture.nativeElement.querySelector('.full-answer').textContent).toContain('You can write AI agents in Java.');
+    expect(link.getAttribute('href')).toBe('https://example.com/adk');
+    expect(link.textContent).toBe('ADK for Java');
   });
 
   it('shows a sanitized hyperlink in the full answer', () => {

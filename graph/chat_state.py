@@ -11,3 +11,4 @@ class ChatState(TypedDict):
     results: NotRequired[list[dict]]
     compact: NotRequired[str]
     detailed: NotRequired[str]
+    references: NotRequired[list[str]]

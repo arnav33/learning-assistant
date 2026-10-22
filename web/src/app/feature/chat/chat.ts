@@ -35,6 +35,7 @@ export class Chat implements OnInit {
       }));
   });
   readonly expandedIds = signal<string[]>([]);
+  private readonly spentSeconds = signal<Readonly<Record<string, number>>>({});
   readonly draft = new FormControl('', { nonNullable: true });
   readonly topic = new FormControl('', { nonNullable: true });
 
@@ -80,6 +81,14 @@ export class Chat implements OnInit {
     return chat.compact || chat.message;
   }
 
+  spentLabel(chatId: string): string | null {
+    const spent = this.spentSeconds()[chatId];
+    if (spent == null) {
+      return null;
+    }
+    return `${spent.toFixed(1)}s`;
+  }
+
   linked(value: string): string {
     return value
       .split(/(<a\b[^>]*>.*?<\/a>)/gis)
@@ -120,8 +129,14 @@ export class Chat implements OnInit {
     this.sending.set(true);
     this.errorMessage.set('');
     this.scrollToLatest();
+    const sentAt = Date.now();
     this.chatApi.send(query, sessionId, sessionId ? null : chosenTopic).subscribe({
       next: (session) => {
+        const spent = (Date.now() - sentAt) / 1000;
+        const reply = [...session.chats].reverse().find((chat) => chat.sender === 'ai');
+        if (reply) {
+          this.spentSeconds.update((current) => ({ ...current, [reply.id]: spent }));
+        }
         const rest = this.sessions().filter((item) => item.id !== session.id && item.id !== 'pending');
         this.sessions.set(this.latestFirst([session, ...rest]));
         this.selectedId.set(session.id);

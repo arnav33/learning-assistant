@@ -27,7 +27,7 @@ class InMemoryAgentRepository(AgentRepository):
         ))
         self.create(AgentEntity(
             id="c3e1a9b4-7d26-4f58-8a10-2e6b9d4c7f81",
-            name="synthesis",
+            name="synthesizer",
             description="local14",
             performance_reviews="",
             model_id="8f603127-6459-4e34-b1f8-18b28672d77f",

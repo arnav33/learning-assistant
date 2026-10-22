@@ -10,7 +10,7 @@ class SupportedDatabase(str, Enum):
 class SupportedAgent(str, Enum):
     """Supported database engine types for the application persistence layer."""
     QUERY = "query"
-    SYNTHESIS = "synthesis"
+    SYNTHESIZER = "synthesizer"
     FORMATTER = "formatter"
 
 class ToolConfig(str, Enum):

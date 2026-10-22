@@ -36,6 +36,7 @@ class InMemoryChatRepository(ChatRepository):
                 results TEXT,
                 compact TEXT,
                 answer TEXT,
+                "references" TEXT,
                 FOREIGN KEY (chat_session_id) REFERENCES chat_session(id)
             )
         """)
@@ -102,8 +103,8 @@ class InMemoryChatRepository(ChatRepository):
         for chat in entity.chats:
             sender = chat.sender.value if isinstance(chat.sender, ChatSender) else chat.sender
             self.cursor.execute("""
-                INSERT INTO chat (id, chat_session_id, sender, message, results, compact, answer)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO chat (id, chat_session_id, sender, message, results, compact, answer, "references")
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 chat.id,
                 entity.id,
@@ -112,6 +113,7 @@ class InMemoryChatRepository(ChatRepository):
                 json.dumps(chat.results) if chat.results is not None else None,
                 chat.compact,
                 chat.answer,
+                json.dumps(chat.references) if chat.references is not None else None,
             ))
 
     def _to_session(self, row: sqlite3.Row) -> ChatSessionEntity:
@@ -133,6 +135,7 @@ class InMemoryChatRepository(ChatRepository):
 
     def _to_chat(self, row: sqlite3.Row) -> ChatEntity:
         stored = row["results"]
+        references = row["references"]
         return ChatEntity(
             id=row["id"],
             chat_session_id=row["chat_session_id"],
@@ -141,4 +144,5 @@ class InMemoryChatRepository(ChatRepository):
             results=json.loads(stored) if stored else None,
             compact=row["compact"],
             answer=row["answer"],
+            references=json.loads(references) if references else None,
         )
