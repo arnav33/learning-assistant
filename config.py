@@ -12,4 +12,9 @@ class SupportedAgent(str, Enum):
     QUERY = "query"
     SYNTHESIS = "synthesis"
     FORMATTER = "formatter"
+
+class ToolConfig(str, Enum):
+    PAGE_SIZE = 20
+    OLDEST_RESULT_LIMIT = 5
+
 DATABASE_TYPE: SupportedDatabase = SupportedDatabase.IN_MEMORY

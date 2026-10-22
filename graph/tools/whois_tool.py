@@ -3,6 +3,7 @@ from concurrent.futures import ThreadPoolExecutor, wait
 from datetime import datetime, timezone
 from urllib.parse import urlparse
 
+from langchain.tools import tool
 from whois import WhoisError, extract_domain, whois
 
 _lock = threading.Lock()
@@ -10,7 +11,8 @@ _ages: dict[str, int | None] = {}
 _LOOKUP_SECONDS = 4
 
 
-def whois_node(results: list[dict]) -> list[dict]:
+@tool
+def whois_tool(results: list[dict]) -> list[dict]:
     """Add the domain age, in days, to each search result.
 
     age is the number of days since the domain was registered. It is None when

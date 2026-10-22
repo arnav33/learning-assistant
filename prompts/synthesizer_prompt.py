@@ -7,7 +7,7 @@ def synthesizer_prompt(reviews: str) -> str:
         .name("Synthesizer")
         .behaviour("You explain a subject from the sources you are given.")
         .expectation("An explanation of the subject for the reader, with every source hyperlink at the bottom.")
-        .input("A question, the sources, and the hyperlink lines that close the answer.")
+        .input("A question and the sources for that question.")
         .rule("The explanation is prose about the subject.")
         .rule("Hyperlinks appear only after the explanation, one per line.")
         .output("The explanation in prose.")

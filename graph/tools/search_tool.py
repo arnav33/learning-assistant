@@ -3,14 +3,19 @@ import time
 
 from ddgs import DDGS
 from ddgs.exceptions import DDGSException
+from langchain.tools import tool
 
-PAGE_SIZE = 20
+from config import ToolConfig
+
+PAGE_SIZE = int(ToolConfig.PAGE_SIZE)
+
 page = 1
 _current_query = ""
 _lock = threading.Lock()
 
 
-def search_node(query: str) -> dict:
+@tool
+def search_tool(query: str) -> dict:
     """Search the web for this query and return one page of at most 10 results.
 
     page starts at 1 for each query. After that query returns results, page moves
