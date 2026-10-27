@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ElementRef, OnInit, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, computed, inject, signal, viewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ChatApi, ChatSession } from './chat-api';
 
@@ -10,7 +10,7 @@ import { ChatApi, ChatSession } from './chat-api';
   styleUrl: './chat.scss',
   templateUrl: './chat.html',
 })
-export class Chat implements OnInit {
+export class Chat implements OnInit, OnDestroy {
   private readonly chatApi = inject(ChatApi);
   private readonly transcript = viewChild<ElementRef<HTMLElement>>('transcript');
 
@@ -36,11 +36,17 @@ export class Chat implements OnInit {
   });
   readonly expandedIds = signal<string[]>([]);
   private readonly spentSeconds = signal<Readonly<Record<string, number>>>({});
+  private readonly thinkingSeconds = signal(0);
+  private thinkingTimer: ReturnType<typeof setInterval> | null = null;
   readonly draft = new FormControl('', { nonNullable: true });
   readonly topic = new FormControl('', { nonNullable: true });
 
   ngOnInit(): void {
     this.loadSessions();
+  }
+
+  ngOnDestroy(): void {
+    this.stopThinking();
   }
 
   loadSessions(): void {
@@ -79,6 +85,10 @@ export class Chat implements OnInit {
 
   displayText(chat: { message: string; compact?: string | null }): string {
     return chat.compact || chat.message;
+  }
+
+  thinkingLabel(): string {
+    return `${Math.floor(this.thinkingSeconds())}s`;
   }
 
   spentLabel(chatId: string): string | null {
@@ -129,10 +139,11 @@ export class Chat implements OnInit {
     this.sending.set(true);
     this.errorMessage.set('');
     this.scrollToLatest();
-    const sentAt = Date.now();
+    const sentAt = this.startThinking();
     this.chatApi.send(query, sessionId, sessionId ? null : chosenTopic).subscribe({
       next: (session) => {
         const spent = (Date.now() - sentAt) / 1000;
+        this.stopThinking();
         const reply = [...session.chats].reverse().find((chat) => chat.sender === 'ai');
         if (reply) {
           this.spentSeconds.update((current) => ({ ...current, [reply.id]: spent }));
@@ -144,6 +155,7 @@ export class Chat implements OnInit {
         this.scrollToLatest();
       },
       error: (error: HttpErrorResponse) => {
+        this.stopThinking();
         this.sending.set(false);
         this.errorMessage.set(this.readError(error, 'Unable to send the message.'));
       },
@@ -154,6 +166,23 @@ export class Chat implements OnInit {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       this.send();
+    }
+  }
+
+  private startThinking(): number {
+    const sentAt = Date.now();
+    this.stopThinking();
+    this.thinkingSeconds.set(0);
+    this.thinkingTimer = setInterval(() => {
+      this.thinkingSeconds.set((Date.now() - sentAt) / 1000);
+    }, 1000);
+    return sentAt;
+  }
+
+  private stopThinking(): void {
+    if (this.thinkingTimer != null) {
+      clearInterval(this.thinkingTimer);
+      this.thinkingTimer = null;
     }
   }
 

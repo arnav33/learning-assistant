@@ -65,7 +65,7 @@ def wait_until_ready(process: subprocess.Popen[str], ready: threading.Event, tim
 def main() -> int:
     print(f"Starting API on {API_URL}", flush=True)
     backend = subprocess.Popen(
-        [sys.executable, "-m", "uvicorn", "main:app", "--reload"],
+        [sys.executable, "-m", "uvicorn", "main:app", "--reload", "--log-level", "debug"],
         cwd=ROOT,
         start_new_session=True,
         stdout=subprocess.PIPE,

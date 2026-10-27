@@ -100,7 +100,7 @@
       }
 
       @if (sending()) {
-        <p class="pending">Thinking…</p>
+        <p class="pending"><span>Thinking…</span><span class="elapsed">{{ thinkingLabel() }}</span></p>
       }
     </div>
 

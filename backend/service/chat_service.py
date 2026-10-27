@@ -50,17 +50,16 @@ class ChatService(BaseService[ChatSessionEntity]):
         session.last_modified_time = now
         self.update(session.id, session)
 
-        reply, compact, answer, results, references, succeeded = _reply(text, session.topic)
-        if len(session.chats) == 1 and succeeded:
-            session.name = _brief_name(reply)
+        compact, answer, references = _reply(text, session.topic)
+        if len(session.chats) == 1 and (compact or answer):
+            session.name = _brief_name(compact or answer)
         session.chats = [
             *session.chats,
             ChatEntity(
                 id=str(uuid4()),
                 chat_session_id=session.id,
                 sender=ChatSender.AI,
-                message=reply,
-                results=results,
+                message=compact or answer or "The reply failed.",
                 compact=compact,
                 answer=answer,
                 references=references,
@@ -72,7 +71,7 @@ class ChatService(BaseService[ChatSessionEntity]):
         return stored if stored is not None else session
 
 
-def _reply(query: str, topic: str) -> tuple[str, str | None, str | None, list[dict] | None, list[str] | None, bool]:
+def _reply(query: str, topic: str) -> tuple[str | None, str | None, list[str] | None]:
     return orchestrate(query, topic)
 
 

@@ -65,6 +65,7 @@ describe('Chat', () => {
   afterEach(() => {
     http.verify();
     vi.restoreAllMocks();
+    vi.useRealTimers();
   });
 
   function flushSessions(sessions: ChatSession[]): void {
@@ -102,6 +103,7 @@ describe('Chat', () => {
     flushSessions([latest]);
     fixture.componentInstance.draft.setValue('what is a chain');
     fixture.detectChanges();
+    vi.useFakeTimers();
     let now = 1_000;
     vi.spyOn(Date, 'now').mockImplementation(() => now);
     fixture.debugElement.query(By.css('form')).triggerEventHandler('submit');
@@ -110,6 +112,11 @@ describe('Chat', () => {
     let messages = [...fixture.nativeElement.querySelectorAll('.message')].map((item: HTMLElement) => item.textContent?.trim());
     expect(messages.at(-1)).toBe('what is a chain');
     expect(fixture.nativeElement.querySelector('.pending').textContent).toContain('Thinking…');
+    expect(fixture.nativeElement.querySelector('.pending .elapsed').textContent).toBe('0s');
+    now = 2_000;
+    vi.advanceTimersByTime(1_000);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.pending .elapsed').textContent).toBe('1s');
     expect(fixture.componentInstance.draft.value).toBe('');
 
     const request = http.expectOne('/api/v1/chat/chat');

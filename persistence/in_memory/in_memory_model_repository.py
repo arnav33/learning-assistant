@@ -1,6 +1,7 @@
 # File: /persistence/in_memory/in_memory_model_repository.py
 import sqlite3
 from typing import List, Optional
+from config import default_local_model
 from persistence.model_repository import ModelRepository
 from persistence.entity.model_entity import ModelEntity
 
@@ -15,8 +16,8 @@ class InMemoryModelRepository(ModelRepository):
         self._create_table()
         self.create(ModelEntity(
             id="8f603127-6459-4e34-b1f8-18b28672d77f",
-            model="qwen2.5:3b",
-            model_provider="ollama",
+            model=default_local_model.model,
+            model_provider=default_local_model.model_provider,
             thinking_budget=0,
             active=True,
             created_by=None,

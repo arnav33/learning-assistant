@@ -15,7 +15,7 @@ class InMemoryAgentRepository(AgentRepository):
         self._create_table()
         self.create(AgentEntity(
             id="d4f7b2a8-1c63-4e90-8b27-5a9c3d6e1f04",
-            name="query",
+            name="proofreader",
             description="local14",
             performance_reviews="",
             model_id="8f603127-6459-4e34-b1f8-18b28672d77f",
@@ -27,7 +27,7 @@ class InMemoryAgentRepository(AgentRepository):
         ))
         self.create(AgentEntity(
             id="c3e1a9b4-7d26-4f58-8a10-2e6b9d4c7f81",
-            name="synthesizer",
+            name="editer",
             description="local14",
             performance_reviews="",
             model_id="8f603127-6459-4e34-b1f8-18b28672d77f",
@@ -39,7 +39,7 @@ class InMemoryAgentRepository(AgentRepository):
         ))
         self.create(AgentEntity(
             id="b8d2f6c1-4e17-4a93-9b20-6c5d8e1a0f47",
-            name="formatter",
+            name="summarizer",
             description="local14",
             performance_reviews="",
             model_id="8f603127-6459-4e34-b1f8-18b28672d77f",
