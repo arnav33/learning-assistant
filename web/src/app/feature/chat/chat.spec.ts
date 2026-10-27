@@ -218,7 +218,7 @@ describe('Chat', () => {
           sender: 'ai',
           message: 'A framework.',
           compact: 'A framework.',
-          answer: 'LangChain is a framework for building applications with large language models.',
+          detailed: 'LangChain is a framework for building applications with large language models.',
         },
       ],
     }]);
@@ -229,6 +229,34 @@ describe('Chat', () => {
     fixture.nativeElement.querySelector('.expand').click();
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.full-answer').textContent).toContain('large language models');
+  });
+
+  it('shows codes between the expanded answer and the references', () => {
+    flushSessions([{
+      ...latest,
+      chats: [
+        latest.chats[0],
+        {
+          id: 'l2',
+          chat_session_id: 'latest',
+          sender: 'ai',
+          message: 'Yes.',
+          compact: 'Yes.',
+          detailed: 'You can write AI agents in Java.',
+          codes: 'def agent():\n    return "ok"',
+          references: ['[ADK for Java](https://example.com/adk)'],
+        },
+      ],
+    }]);
+
+    fixture.nativeElement.querySelector('.expand').click();
+    fixture.detectChanges();
+    const answer = fixture.nativeElement.querySelector('.full-answer') as HTMLElement;
+    const code = fixture.nativeElement.querySelector('.codes') as HTMLElement;
+    const references = fixture.nativeElement.querySelector('.references') as HTMLElement;
+    expect(code.textContent).toContain('def agent()');
+    expect(answer.compareDocumentPosition(code) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(code.compareDocumentPosition(references) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it('shows references under the expanded answer', () => {
@@ -242,7 +270,7 @@ describe('Chat', () => {
           sender: 'ai',
           message: 'Yes.',
           compact: 'Yes.',
-          answer: 'You can write AI agents in Java.',
+          detailed: 'You can write AI agents in Java.',
           references: ['[ADK for Java](https://example.com/adk)'],
         },
       ],
@@ -267,7 +295,7 @@ describe('Chat', () => {
           sender: 'ai',
           message: 'A framework.',
           compact: 'A framework.',
-          answer: 'LangChain is a framework [docs](https://example.com/langchain). <script>alert(1)</script><a href="javascript:alert(1)">bad</a>',
+          detailed: 'LangChain is a framework [docs](https://example.com/langchain). <script>alert(1)</script><a href="javascript:alert(1)">bad</a>',
         },
       ],
     }]);

@@ -21,7 +21,8 @@ class ChatEntity:
     message: str
     results: list[dict] | None = None
     compact: str | None = None
-    answer: str | None = None
+    detailed: str | None = None
+    codes: str | None = None
     references: list[str] | None = None
 
 

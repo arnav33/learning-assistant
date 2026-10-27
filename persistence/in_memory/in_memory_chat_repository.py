@@ -35,7 +35,8 @@ class InMemoryChatRepository(ChatRepository):
                 message TEXT NOT NULL,
                 results TEXT,
                 compact TEXT,
-                answer TEXT,
+                detailed TEXT,
+                codes TEXT,
                 "references" TEXT,
                 FOREIGN KEY (chat_session_id) REFERENCES chat_session(id)
             )
@@ -103,8 +104,8 @@ class InMemoryChatRepository(ChatRepository):
         for chat in entity.chats:
             sender = chat.sender.value if isinstance(chat.sender, ChatSender) else chat.sender
             self.cursor.execute("""
-                INSERT INTO chat (id, chat_session_id, sender, message, results, compact, answer, "references")
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO chat (id, chat_session_id, sender, message, results, compact, detailed, codes, "references")
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 chat.id,
                 entity.id,
@@ -112,7 +113,8 @@ class InMemoryChatRepository(ChatRepository):
                 chat.message,
                 json.dumps(chat.results) if chat.results is not None else None,
                 chat.compact,
-                chat.answer,
+                chat.detailed,
+                chat.codes,
                 json.dumps(chat.references) if chat.references is not None else None,
             ))
 
@@ -143,6 +145,7 @@ class InMemoryChatRepository(ChatRepository):
             message=row["message"],
             results=json.loads(stored) if stored else None,
             compact=row["compact"],
-            answer=row["answer"],
+            detailed=row["detailed"],
+            codes=row["codes"],
             references=json.loads(references) if references else None,
         )

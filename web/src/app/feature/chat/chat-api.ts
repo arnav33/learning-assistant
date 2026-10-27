@@ -9,7 +9,8 @@ export interface ChatMessage {
   message: string;
   results?: Record<string, unknown>[] | null;
   compact?: string | null;
-  answer?: string | null;
+  detailed?: string | null;
+  codes?: string | null;
   references?: string[] | null;
 }
 

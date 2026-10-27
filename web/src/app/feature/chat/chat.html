@@ -70,8 +70,11 @@
                   </button>
                 }
               </div>
-              @if (expanded(chat.id) && chat.answer) {
-                <p class="full-answer" [innerHTML]="linked(chat.answer)"></p>
+              @if (expanded(chat.id) && chat.detailed) {
+                <p class="full-answer" [innerHTML]="linked(chat.detailed)"></p>
+                @if (chat.codes) {
+                  <pre class="codes"><code>{{ chat.codes }}</code></pre>
+                }
                 @if (chat.references?.length) {
                   <ul class="references">
                     @for (item of chat.references; track item) {

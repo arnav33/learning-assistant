@@ -3,7 +3,7 @@ from langchain.chat_models import init_chat_model
 
 from backend.service.agent_service import agent_service
 from backend.service.model_service import model_service
-from config import MODEL_NUM_CTX, SupportedAgent
+from graph.common import SupportedAgent
 
 _summarizer = agent_service.get_by_name(SupportedAgent.SUMMARIZER)
 _summarizer_model = model_service.get_by_id(_summarizer.model_id)

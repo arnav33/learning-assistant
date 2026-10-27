@@ -7,10 +7,13 @@ from aop.timer import timer
 def log_execution(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
+        print("--------------------------------")
         print(f"[Before] Calling {func.__name__}...") # Before Advice
         timer.start(func.__name__)
         result = func(*args, **kwargs)
-        print(f"[After] {func.__name__} executed successfully.") # After Advice
+        print(f"[After] {func.__name__} executed successfully.")
+        print(result) # After Advice
+        print("--------------------------------")
         timer.stop(func.__name__)
         return result
     return wrapper

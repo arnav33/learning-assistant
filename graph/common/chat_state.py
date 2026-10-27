@@ -4,6 +4,8 @@ from typing import Annotated, Any
 from langchain.agents import AgentState
 from langgraph.graph.message import add_messages
 
+from graph.common import IntentType
+
 
 class ChatState(AgentState):
     topic: str = ""
@@ -13,14 +15,6 @@ class ChatState(AgentState):
     compact: str | None = None
     detailed: str | None = None
     references: list[str] | None = None
+    codes: list[str] | None = None
+    intents: list[IntentType] | None = None
 
-    def get_property(self, name: str) -> Any:
-        if name not in self.__dataclass_fields__:
-            raise AttributeError(name)
-        return getattr(self, name)
-
-    def set_property(self, name: str, value: Any) -> dict[str, Any]:
-        if name not in self.__dataclass_fields__:
-            raise AttributeError(name)
-        setattr(self, name, value)
-        return {name: value}

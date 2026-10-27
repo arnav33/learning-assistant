@@ -106,8 +106,8 @@ export class Chat implements OnInit, OnDestroy {
       .join('');
   }
 
-  canExpand(chat: { message: string; compact?: string | null; answer?: string | null }): boolean {
-    return Boolean(chat.answer) && chat.answer !== this.displayText(chat);
+  canExpand(chat: { message: string; compact?: string | null; detailed?: string | null }): boolean {
+    return Boolean(chat.detailed) && chat.detailed !== this.displayText(chat);
   }
 
   expanded(chatId: string): boolean {

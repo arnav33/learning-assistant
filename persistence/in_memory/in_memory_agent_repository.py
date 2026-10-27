@@ -49,6 +49,30 @@ class InMemoryAgentRepository(AgentRepository):
             last_modified_by=None,
             last_modified_time="2026-10-20T18:23:53.715Z",
         ))
+        self.create(AgentEntity(
+            id="e7a1c4d9-2b58-4f63-8d14-9c6e0a3b5f72",
+            name="coder",
+            description="local14",
+            performance_reviews="",
+            model_id="8f603127-6459-4e34-b1f8-18b28672d77f",
+            active=True,
+            created_by=None,
+            created_time="2026-10-20T18:23:53.715Z",
+            last_modified_by=None,
+            last_modified_time="2026-10-20T18:23:53.715Z",
+        ))
+        self.create(AgentEntity(
+            id="f2b6d8e3-5a41-4c70-9e28-7d1f4a9c6b53",
+            name="intent_analyzer",
+            description="local14",
+            performance_reviews="",
+            model_id="8f603127-6459-4e34-b1f8-18b28672d77f",
+            active=True,
+            created_by=None,
+            created_time="2026-10-20T18:23:53.715Z",
+            last_modified_by=None,
+            last_modified_time="2026-10-20T18:23:53.715Z",
+        ))
 
     def _create_table(self):
         self.cursor.execute("""
