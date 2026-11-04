@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ElementRef, OnDestroy, OnInit, computed, inject, signal, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, computed, inject, signal, viewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ChatApi, ChatSession } from './chat-api';
 
@@ -10,9 +10,10 @@ import { ChatApi, ChatSession } from './chat-api';
   styleUrl: './chat.scss',
   templateUrl: './chat.html',
 })
-export class Chat implements OnInit, OnDestroy {
+export class Chat implements OnInit, AfterViewInit, OnDestroy {
   private readonly chatApi = inject(ChatApi);
   private readonly transcript = viewChild<ElementRef<HTMLElement>>('transcript');
+  private readonly question = viewChild<ElementRef<HTMLTextAreaElement>>('question');
 
   readonly sessions = signal<ChatSession[]>([]);
   readonly selectedId = signal<string | null>(null);
@@ -20,29 +21,18 @@ export class Chat implements OnInit, OnDestroy {
   readonly sending = signal(false);
   readonly errorMessage = signal('');
   readonly selected = computed(() => this.sessions().find((session) => session.id === this.selectedId()) ?? null);
-  readonly groups = computed(() => {
-    const byTopic = new Map<string, ChatSession[]>();
-    for (const session of this.sessions()) {
-      const grouped = byTopic.get(session.topic) ?? [];
-      grouped.push(session);
-      byTopic.set(session.topic, grouped);
-    }
-    return [...byTopic.entries()]
-      .sort(([left], [right]) => left.localeCompare(right, undefined, { sensitivity: 'base' }))
-      .map(([topic, sessions]) => ({
-        topic,
-        sessions: [...sessions].sort((left, right) => right.last_modified_time.localeCompare(left.last_modified_time)),
-      }));
-  });
   readonly expandedIds = signal<string[]>([]);
   private readonly spentSeconds = signal<Readonly<Record<string, number>>>({});
   private readonly thinkingSeconds = signal(0);
   private thinkingTimer: ReturnType<typeof setInterval> | null = null;
   readonly draft = new FormControl('', { nonNullable: true });
-  readonly topic = new FormControl('', { nonNullable: true });
 
   ngOnInit(): void {
     this.loadSessions();
+  }
+
+  ngAfterViewInit(): void {
+    this.question()?.nativeElement.focus();
   }
 
   ngOnDestroy(): void {
@@ -79,7 +69,6 @@ export class Chat implements OnInit, OnDestroy {
   startNewChat(): void {
     this.selectedId.set(null);
     this.draft.setValue('');
-    this.topic.setValue('');
     this.errorMessage.set('');
   }
 
@@ -122,25 +111,20 @@ export class Chat implements OnInit, OnDestroy {
     return Object.entries(item).map(([key, value]) => ({ key, value: String(value ?? '') }));
   }
 
-  topicLabel(topic: string): string {
-    return topic.replace(/\S+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1));
-  }
-
   send(event?: Event): void {
     event?.preventDefault();
     const query = this.draft.value.trim();
-    const chosenTopic = this.topic.value.trim();
     const sessionId = this.selectedId();
-    if (!query || this.sending() || (!sessionId && !chosenTopic)) {
+    if (!query || this.sending()) {
       return;
     }
-    this.showOutgoing(sessionId, query, sessionId ? '' : chosenTopic);
+    this.showOutgoing(sessionId, query);
     this.draft.setValue('');
     this.sending.set(true);
     this.errorMessage.set('');
     this.scrollToLatest();
     const sentAt = this.startThinking();
-    this.chatApi.send(query, sessionId, sessionId ? null : chosenTopic).subscribe({
+    this.chatApi.send(query, sessionId).subscribe({
       next: (session) => {
         const spent = (Date.now() - sentAt) / 1000;
         this.stopThinking();
@@ -213,7 +197,7 @@ export class Chat implements OnInit, OnDestroy {
     return `<a href="${href}">${text}</a>`;
   }
 
-  private showOutgoing(sessionId: string | null, query: string, topic: string): void {
+  private showOutgoing(sessionId: string | null, query: string): void {
     const now = new Date().toISOString();
     const message = {
       id: crypto.randomUUID(),
@@ -225,7 +209,6 @@ export class Chat implements OnInit, OnDestroy {
       const pending: ChatSession = {
         id: 'pending',
         name: query,
-        topic,
         chats: [message],
         created_by: null,
         created_time: now,

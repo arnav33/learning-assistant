@@ -17,7 +17,7 @@ class ChatService(BaseService[ChatSessionEntity]):
     def __init__(self, repository: ChatRepository):
         super().__init__(repository)
 
-    def send(self, query: str, session_id: Optional[str] = None, topic: Optional[str] = None) -> ChatSessionEntity:
+    def send(self, query: str, session_id: Optional[str] = None) -> ChatSessionEntity:
         text = query.strip()
         if not text:
             raise HTTPException(status_code=400, detail="A query is required.")
@@ -28,13 +28,9 @@ class ChatService(BaseService[ChatSessionEntity]):
             if session is None:
                 raise HTTPException(status_code=404, detail="Chat session not found.")
         else:
-            chosen = (topic or "").strip()
-            if not chosen:
-                raise HTTPException(status_code=400, detail="A topic is required.")
             session = ChatSessionEntity(
                 id=str(uuid4()),
                 name=_brief_name(text),
-                topic=chosen,
                 chats=[],
                 created_by=None,
                 created_time=now,
@@ -50,7 +46,7 @@ class ChatService(BaseService[ChatSessionEntity]):
         session.last_modified_time = now
         self.update(session.id, session)
 
-        compact, detailed, references, codes = _reply(text, session.topic)
+        compact, detailed, references, codes = _reply(text)
         if len(session.chats) == 1 and (compact or detailed):
             session.name = _brief_name(compact or detailed)
         session.chats = [
@@ -72,8 +68,8 @@ class ChatService(BaseService[ChatSessionEntity]):
         return stored if stored is not None else session
 
 
-def _reply(query: str, topic: str) -> tuple[str | None, str | None, list[str] | None, str | None]:
-    return orchestrate(query, topic)
+def _reply(query: str) -> tuple[str | None, str | None, list[str] | None, str | None]:
+    return orchestrate(query)
 
 
 def _brief_name(text: str) -> str:

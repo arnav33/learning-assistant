@@ -6,8 +6,8 @@ from enum import Enum
 from graph.common import LocalModel, SupportedDatabase
 
 class ToolConfig(str, Enum):
-    PAGE_SIZE = 20
-    OLDEST_RESULT_LIMIT = 5
+    PAGE_SIZE = 7
+    OLDEST_RESULT_LIMIT = 3
 
 llama3p2_1b = LocalModel(
     model="llama3.2:1b",
@@ -34,11 +34,11 @@ qwen2p5_7b = LocalModel(
     model_provider="ollama",
 )
 
-default_local_model = qwen2p5_7b
+default_local_model = qwen2p5_7b 
 
 
 DATABASE_TYPE: SupportedDatabase = SupportedDatabase.IN_MEMORY
-MODEL_NUM_CTX = 65536
+MODEL_NUM_CTX = 20000
 
 
 

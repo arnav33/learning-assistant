@@ -62,6 +62,18 @@ class InMemoryAgentRepository(AgentRepository):
             last_modified_time="2026-10-20T18:23:53.715Z",
         ))
         self.create(AgentEntity(
+            id="a9c4e2d7-3b16-4f85-8d20-1e7a5c6b9f38",
+            name="scorer",
+            description="local14",
+            performance_reviews="",
+            model_id="8f603127-6459-4e34-b1f8-18b28672d77f",
+            active=True,
+            created_by=None,
+            created_time="2026-10-20T18:23:53.715Z",
+            last_modified_by=None,
+            last_modified_time="2026-10-20T18:23:53.715Z",
+        ))
+        self.create(AgentEntity(
             id="f2b6d8e3-5a41-4c70-9e28-7d1f4a9c6b53",
             name="intent_analyzer",
             description="local14",

@@ -31,5 +31,4 @@ class ChatSessionEntity(BaseEntity):
     """A chat session and the messages that belong to it."""
 
     name: str
-    topic: str
     chats: list[ChatEntity] = field(default_factory=list)

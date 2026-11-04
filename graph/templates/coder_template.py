@@ -1,5 +1,5 @@
 def coder_template() -> str:
     return (
-        "Use {query} and {results} to generate a valid Minumal Reproducible Example (MRE)."
+        "query: {query} and code snippets: {browse_text}"
     )
  

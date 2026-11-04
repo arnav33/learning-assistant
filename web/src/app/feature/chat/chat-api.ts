@@ -17,7 +17,6 @@ export interface ChatMessage {
 export interface ChatSession {
   id: string;
   name: string;
-  topic: string;
   chats: ChatMessage[];
   created_by: string | null;
   created_time: string;
@@ -34,11 +33,10 @@ export class ChatApi {
     return this.http.get<ChatSession[]>(`${this.baseUrl}/`);
   }
 
-  send(query: string, sessionId: string | null, topic: string | null): Observable<ChatSession> {
+  send(query: string, sessionId: string | null): Observable<ChatSession> {
     return this.http.post<ChatSession>(`${this.baseUrl}/chat`, {
       query,
       session_id: sessionId,
-      topic,
     });
   }
 }

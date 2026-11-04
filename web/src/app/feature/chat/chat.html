@@ -10,37 +10,25 @@
     } @else if (sessions().length === 0) {
       <p class="status">No chats yet.</p>
     } @else {
-      <div class="session-list">
-        @for (group of groups(); track group.topic) {
-          <section class="topic-group">
-            <h3>{{ topicLabel(group.topic) }}</h3>
-            <ul>
-              @for (session of group.sessions; track session.id) {
-                <li>
-                  <button
-                    type="button"
-                    class="session"
-                    [class.selected]="session.id === selectedId()"
-                    [disabled]="sending()"
-                    (click)="selectSession(session.id)"
-                  >
-                    {{ session.name }}
-                  </button>
-                </li>
-              }
-            </ul>
-          </section>
+      <ul class="session-list">
+        @for (session of sessions(); track session.id) {
+          <li>
+            <button
+              type="button"
+              class="session"
+              [class.selected]="session.id === selectedId()"
+              [disabled]="sending()"
+              (click)="selectSession(session.id)"
+            >
+              {{ session.name }}
+            </button>
+          </li>
         }
-      </div>
+      </ul>
     }
   </aside>
 
   <section class="conversation">
-    @if (selected(); as session) {
-      @if (session.chats.length > 0) {
-        <h2 class="conversation-topic">{{ topicLabel(session.topic) }}</h2>
-      }
-    }
     <div class="messages" #transcript>
       @if (selected(); as session) {
         @for (chat of session.chats; track chat.id) {
@@ -112,24 +100,17 @@
     }
 
     <form class="composer" (submit)="send($event)">
-      @if (!selected()) {
-        <input
-          class="topic"
-          [formControl]="topic"
-          placeholder="Topic"
-          aria-label="Topic"
-          [disabled]="sending()"
-        />
-      }
       <div class="composer-row">
         <textarea
+          #question
           [formControl]="draft"
           rows="1"
           placeholder="Ask a question"
           [attr.aria-label]="'Message'"
+          autofocus
           (keydown)="onComposerKeydown($event)"
         ></textarea>
-        <button type="submit" [disabled]="sending() || !draft.value.trim() || (!selected() && !topic.value.trim())">Send</button>
+        <button type="submit" [disabled]="sending() || !draft.value.trim()">Send</button>
       </div>
     </form>
   </section>

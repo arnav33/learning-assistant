@@ -17,11 +17,13 @@ def _promote(results: list[dict], hosts: set[str]) -> list[dict]:
     rest = []
     for item in results:
         found = host(str(item.get("href") or ""))
-        if found and any(same_site(found, official_host) for official_host in hosts):
+        gate = True
+        if gate and found and any(same_site(found, official_host) for official_host in hosts):
             official.append(item)
+            gate = False
         else:
             rest.append(item)
-    return [{**item, "rank": index} for index, item in enumerate(official + rest, start=1)]
+    return [{**item, "rank": index} for index, item in enumerate(official + rest, start=1)] if gate else results
 
 
 import json

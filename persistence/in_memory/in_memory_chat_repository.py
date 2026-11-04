@@ -20,7 +20,6 @@ class InMemoryChatRepository(ChatRepository):
             CREATE TABLE IF NOT EXISTS chat_session (
                 id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
-                topic TEXT NOT NULL,
                 created_by TEXT,
                 created_time TEXT NOT NULL,
                 last_modified_by TEXT,
@@ -46,12 +45,11 @@ class InMemoryChatRepository(ChatRepository):
     def create(self, entity: ChatSessionEntity) -> str:
         self.cursor.execute("""
             INSERT INTO chat_session (
-                id, name, topic, created_by, created_time, last_modified_by, last_modified_time
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                id, name, created_by, created_time, last_modified_by, last_modified_time
+            ) VALUES (?, ?, ?, ?, ?, ?)
         """, (
             entity.id,
             entity.name,
-            entity.topic,
             entity.created_by,
             entity.created_time,
             entity.last_modified_by,
@@ -72,17 +70,16 @@ class InMemoryChatRepository(ChatRepository):
         return self._to_session(row) if row else None
 
     def update(self, entity_id: str, entity: ChatSessionEntity) -> bool:
-        self.cursor.execute("SELECT topic FROM chat_session WHERE id = ?", (entity_id,))
+        self.cursor.execute("SELECT id FROM chat_session WHERE id = ?", (entity_id,))
         stored = self.cursor.fetchone()
         if stored is None:
             return False
         self.cursor.execute("""
             UPDATE chat_session
-            SET name = ?, topic = ?, last_modified_by = ?, last_modified_time = ?
+            SET name = ?, last_modified_by = ?, last_modified_time = ?
             WHERE id = ?
         """, (
             entity.name,
-            stored["topic"],
             entity.last_modified_by,
             entity.last_modified_time,
             entity_id,
@@ -127,7 +124,6 @@ class InMemoryChatRepository(ChatRepository):
         return ChatSessionEntity(
             id=row["id"],
             name=row["name"],
-            topic=row["topic"],
             chats=chats,
             created_by=row["created_by"],
             created_time=row["created_time"],

@@ -43,24 +43,10 @@
 }
 
 .session-list {
+  list-style: none;
   overflow: auto;
+  margin: 0;
   padding: 0 0.5rem 1rem;
-}
-
-.topic-group {
-  margin: 0 0 0.5rem;
-  h3 {
-    margin: 0.85rem 0.75rem 0.2rem;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #52525b;
-    text-align: left;
-  }
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
 }
 
 .session {
@@ -86,14 +72,6 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-}
-
-.conversation-topic {
-  margin: 0;
-  padding: 0.9rem 8% 0.75rem;
-  border-bottom: 1px solid #e4e4e7;
-  font-size: 1rem;
-  font-weight: 700;
 }
 
 .messages {
@@ -226,7 +204,6 @@
   align-items: flex-end;
 }
 
-.topic,
 .composer textarea {
   width: 100%;
   border: 1px solid #d4d4d8;
@@ -257,5 +234,5 @@
   .chat-shell { flex-direction: column; }
   .sessions, .conversation { width: 100%; flex-basis: auto; }
   .sessions { max-height: 30dvh; border-right: none; border-bottom: 1px solid #e4e4e7; }
-  .messages, .composer, .conversation-topic { padding-left: 1rem; padding-right: 1rem; }
+  .messages, .composer { padding-left: 1rem; padding-right: 1rem; }
 }

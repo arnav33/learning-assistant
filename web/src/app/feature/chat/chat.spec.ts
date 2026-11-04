@@ -13,7 +13,6 @@ describe('Chat', () => {
   const older: ChatSession = {
     id: 'older',
     name: 'what is a cell',
-    topic: 'cells',
     chats: [
       { id: 'o1', chat_session_id: 'older', sender: 'human', message: 'what is a cell' },
       { id: 'o2', chat_session_id: 'older', sender: 'ai', message: 'A cell is the basic unit of life.' },
@@ -27,7 +26,6 @@ describe('Chat', () => {
   const newerCells: ChatSession = {
     id: 'newer-cells',
     name: 'what is mitochondria',
-    topic: 'cells',
     chats: [
       { id: 'n1', chat_session_id: 'newer-cells', sender: 'human', message: 'what is mitochondria' },
       { id: 'n2', chat_session_id: 'newer-cells', sender: 'ai', message: 'Mitochondria make energy.' },
@@ -41,7 +39,6 @@ describe('Chat', () => {
   const latest: ChatSession = {
     id: 'latest',
     name: 'what is langchain in python',
-    topic: 'python libraries',
     chats: [
       { id: 'l1', chat_session_id: 'latest', sender: 'human', message: 'what is langchain in python' },
       { id: 'l2', chat_session_id: 'latest', sender: 'ai', message: 'LangChain is a Python library.' },
@@ -74,19 +71,16 @@ describe('Chat', () => {
     fixture.detectChanges();
   }
 
-  it('groups sessions by topic and shows the topic above the conversation', () => {
+  it('lists sessions with the latest first', () => {
     flushSessions([older, latest, newerCells]);
 
-    const headings = [...fixture.nativeElement.querySelectorAll('.topic-group h3')].map((heading: HTMLElement) => heading.textContent?.trim());
     const labels = [...fixture.nativeElement.querySelectorAll('.session')].map((button: HTMLButtonElement) => button.textContent?.trim());
-    expect(headings).toEqual(['Cells', 'Python Libraries']);
     expect(labels).toEqual([
+      'what is langchain in python',
       'what is mitochondria',
       'what is a cell',
-      'what is langchain in python',
     ]);
     expect(fixture.nativeElement.querySelector('.session.selected').textContent).toContain('what is langchain in python');
-    expect(fixture.nativeElement.querySelector('.conversation-topic').textContent).toContain('Python Libraries');
     expect(fixture.nativeElement.querySelector('input.topic')).toBeNull();
   });
 
@@ -121,7 +115,7 @@ describe('Chat', () => {
 
     const request = http.expectOne('/api/v1/chat/chat');
     expect(request.request.method).toBe('POST');
-    expect(request.request.body).toEqual({ query: 'what is a chain', session_id: 'latest', topic: null });
+    expect(request.request.body).toEqual({ query: 'what is a chain', session_id: 'latest' });
     now = 4_200;
     request.flush({
       ...latest,
@@ -141,33 +135,24 @@ describe('Chat', () => {
     expect(fixture.componentInstance.draft.value).toBe('');
   });
 
-  it('asks for a topic once when starting a chat', () => {
+  it('starts a chat from the message alone', () => {
     flushSessions([]);
     fixture.componentInstance.startNewChat();
     fixture.detectChanges();
 
-    const topic = fixture.nativeElement.querySelector('.topic') as HTMLInputElement;
-    expect(topic).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('input.topic')).toBeNull();
     fixture.componentInstance.draft.setValue('what is python');
-    fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('button[type="submit"]').disabled).toBe(true);
-
-    fixture.componentInstance.topic.setValue('snakes');
     fixture.detectChanges();
     fixture.debugElement.query(By.css('form')).triggerEventHandler('submit');
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('input.topic')).toBeNull();
-    expect(fixture.nativeElement.querySelector('.conversation-topic').textContent).toContain('Snakes');
-    expect(fixture.nativeElement.querySelector('.topic-group h3').textContent).toContain('Snakes');
     expect(fixture.nativeElement.querySelector('.session').textContent?.trim()).toBe('what is python');
 
     const request = http.expectOne('/api/v1/chat/chat');
-    expect(request.request.body).toEqual({ query: 'what is python', session_id: null, topic: 'snakes' });
+    expect(request.request.body).toEqual({ query: 'what is python', session_id: null });
     request.flush({
       id: 'created',
       name: 'what is python',
-      topic: 'snakes',
       chats: [
         { id: 'c1', chat_session_id: 'created', sender: 'human', message: 'what is python' },
         { id: 'c2', chat_session_id: 'created', sender: 'ai', message: 'what is python' },
@@ -180,8 +165,7 @@ describe('Chat', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('input.topic')).toBeNull();
-    expect(fixture.nativeElement.querySelector('.conversation-topic').textContent).toContain('Snakes');
-    expect(fixture.componentInstance.selected()?.topic).toBe('snakes');
+    expect(fixture.componentInstance.selected()?.id).toBe('created');
   });
 
   it('shows the synthesized answer without the search fields', () => {

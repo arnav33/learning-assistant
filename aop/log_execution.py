@@ -12,7 +12,6 @@ def log_execution(func):
         timer.start(func.__name__)
         result = func(*args, **kwargs)
         print(f"[After] {func.__name__} executed successfully.")
-        print(result) # After Advice
         print("--------------------------------")
         timer.stop(func.__name__)
         return result
